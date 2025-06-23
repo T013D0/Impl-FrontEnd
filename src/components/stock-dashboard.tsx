@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Search } from "lucide-react"
 import type { Sucursal, Producto, StockSucursal } from "@/lib/types"
+import { CreateProductModal } from "@/components/create-product-modal"
 
 export function StockDashboard() {
   const [sucursales, setSucursales] = useState<Sucursal[]>([])
@@ -55,7 +56,7 @@ export function StockDashboard() {
 
   // Listen for SSE updates
   useEffect(() => {
-    const eventSource = new EventSource("http://localhost:8000/sse/stock/")
+    const eventSource = new EventSource("http://localhost:8000/api/sse/stock/")
 
     eventSource.onmessage = (event) => {
       const data = event.data
@@ -111,6 +112,10 @@ export function StockDashboard() {
     return <Badge variant="default">En stock: {cantidad}</Badge>
   }
 
+  const handleProductCreated = (newProduct: Producto) => {
+    setProductos((prev) => [...prev, newProduct])
+  }
+
   return (
     <div>
       <Card className="mb-6">
@@ -140,6 +145,7 @@ export function StockDashboard() {
                 ))}
               </SelectContent>
             </Select>
+            <CreateProductModal onProductCreated={handleProductCreated} />
           </div>
         </CardContent>
       </Card>
